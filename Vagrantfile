@@ -18,8 +18,7 @@ git clone "https://github.com/saptarshibasu/spring-boot-docker.git"
 cd spring-boot-docker
 echo "Building source code"
 sudo mvn clean install dockerfile:build
-cd target/docker
-sudo docker run -d sbd
+sudo docker run -d docker/spd
 SCRIPT
    
 
