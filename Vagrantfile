@@ -1,7 +1,4 @@
 $install=<<SCRIPT
-if [ -f "/var/vagrant_provision" ]; then
-    exit 0
-fi
 echo "Updating package lists..."
 sudo apk update
 echo "Installing Docker..."
@@ -13,7 +10,6 @@ echo "Installing OpenJDK 8..."
 sudo apk add openjdk8
 echo "Installing Maven..."
 sudo apk add maven
-sudo touch /var/vagrant_provision
 SCRIPT
 
 $build=<<SCRIPT
