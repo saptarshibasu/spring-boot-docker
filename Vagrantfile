@@ -4,6 +4,7 @@ sudo apk update
 echo "Installing Docker..."
 sudo apk add docker
 sudo service docker start
+sudo rc-update add docker boot
 echo "Installing Git..."
 sudo apk add git
 echo "Installing OpenJDK 8..."
