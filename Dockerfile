@@ -1,5 +1,4 @@
 FROM openjdk:8-jdk-alpine
-RUN apk add nmap
 VOLUME /tmp
 ARG JAR_FILE
 COPY ${JAR_FILE} app.jar

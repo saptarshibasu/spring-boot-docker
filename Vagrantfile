@@ -1,4 +1,8 @@
 $install=<<SCRIPT
+echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+for entry in /sys/fs/cgroup/*/cgroup.clone_children; do
+    echo 1 > $entry
+done
 echo "Updating package lists..."
 sudo apk update
 echo "Installing Docker..."
@@ -28,7 +32,7 @@ Vagrant.configure("2") do |config|
     config.vm.network "forwarded_port", guest: 8080, host: 8080
     config.vm.provider "virtualbox" do |v|
         v.name = "spring-boot-docker"
-        v.memory = 4096
+        v.memory = 1024
         v.cpus = 2
     end
     
