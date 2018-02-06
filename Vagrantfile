@@ -1,20 +1,31 @@
 $install=<<SCRIPT
-echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
-for entry in /sys/fs/cgroup/*/cgroup.clone_children; do
-    echo 1 > $entry
-done
+if [ -f "/ var/ vagrant_provision" ]; then
+    exit 0
+fi
 echo "Updating package lists..."
-sudo apk update
+sudo apt-get update
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add 
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
 echo "Installing Docker..."
-sudo apk add docker
+sudo apt-get install docker-ce
 sudo service docker start
-sudo rc-update add docker boot
+sudo systemctl enable docker
 echo "Installing Git..."
-sudo apk add git
+sudo apt-get install git
 echo "Installing OpenJDK 8..."
-sudo apk add openjdk8
+sudo apt-get install openjdk-8-jdk
 echo "Installing Maven..."
-sudo apk add maven
+sudo apt-get install maven
+touch /var/ vagrant_provision
 SCRIPT
 
 $build=<<SCRIPT
@@ -28,11 +39,11 @@ SCRIPT
    
 
 Vagrant.configure("2") do |config|
-    config.vm.box = "maier/alpine-3.6-x86_64"
+    config.vm.box = "ubuntu/trusty64"
     config.vm.network "forwarded_port", guest: 8080, host: 8080
     config.vm.provider "virtualbox" do |v|
         v.name = "spring-boot-docker"
-        v.memory = 1024
+        v.memory = 2048
         v.cpus = 2
     end
     
