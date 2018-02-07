@@ -1,5 +1,5 @@
 $install=<<SCRIPT
-if [ -f "/ var/ vagrant_provision" ]; then
+if [ -f "/var/vagrant_provision" ]; then
     exit 0
 fi
 echo "Updating package lists..."
@@ -28,7 +28,7 @@ sudo apt-get update -y
 sudo apt-get install openjdk-8-jdk -y
 echo "Installing Maven..."
 sudo apt-get install maven -y
-touch /var/ vagrant_provision
+touch /var/vagrant_provision
 SCRIPT
 
 $build=<<SCRIPT
@@ -37,20 +37,27 @@ git clone "https://github.com/saptarshibasu/spring-boot-docker.git"
 cd spring-boot-docker
 echo "Building source code"
 sudo mvn clean install dockerfile:build
-sudo docker run -d -p 8080:8080 docker/spd
 SCRIPT
    
+$runapp=<<SCRIPT
+if [ $MYENV == "DEV" ]; then
+    cd /vagrant
+    sudo mvn spring-boot:run
+else
+    sudo docker run -d -p 8080:8080 docker/spd
+fi
+SCRIPT
 
 Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/trusty64"
     config.vm.network "forwarded_port", guest: 8080, host: 8080
     config.vm.provider "virtualbox" do |v|
         v.name = "spring-boot-docker"
-        v.memory = 2048
+        v.memory = 512
         v.cpus = 2
     end
     
-    
     config.vm.provision "shell", inline: $install
     config.vm.provision "shell", inline: $build
+	config.vm.provision "shell", inline: $runapp, run: 'always', env: {"MYENV" => ENV['MYENV']}
 end
