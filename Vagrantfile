@@ -42,7 +42,7 @@ SCRIPT
 $runapp=<<SCRIPT
 if [ $MYENV == "DEV" ]; then
     cd /vagrant
-    sudo mvn spring-boot:run
+    sudo mvn spring-boot:run&
 else
     sudo docker run -d -p 8080:8080 docker/spd
 fi
